@@ -1,57 +1,51 @@
 import { useState, useEffect } from "react";
 
-export const usePromise = (
+export const useAsync = (
   fn,
-  { resolve = false, resolveCondition = [] } = {}
+  {
+    resolve = false,
+    resolveCondition = [],
+    defaultData = null,
+    defaultLoading = resolve,
+  } = {}
 ) => {
-  const [data, setData] = useState();
-  const [isLoading, setLoading] = useState(resolve);
+  const [data, setData] = useState(defaultData);
+  const [isLoading, setLoading] = useState(defaultLoading);
   const [lastUpdated, setLastUpdated] = useState();
   const [error, setError] = useState();
 
   const request = (...args) => {
-    /*
-    Using isValid guard, in order to prevent the cleanup warning.
-    */
-    let isValid = true;
+    if (typeof fn !== "function") {
+      console.error("Invalid function provided to useAsync");
+      return;
+    }
+
     setLoading(true);
 
     fn(...args)
-      .then(result => {
-        if (!isValid) return;
-
+      .then((result) => {
         setData(result);
         setLastUpdated(Date.now());
       })
-      .catch(err => {
-        if (!isValid) return;
-
+      .catch((err) => {
         setError(err);
       })
       .finally(() => {
-        if (!isValid) return;
-
         setLoading(false);
       });
-
-    /*
-    When component will be unmounted, isValid will become false and state setter
-    functions will not be envoked on unmounted component.
-    */
-    return () => {
-      isValid = false;
-    };
   };
 
-  if (resolve) {
-    useEffect(request, resolveCondition);
-  }
+  useEffect(() => {
+    if (resolve) {
+      request();
+    }
+  }, resolveCondition);
 
   return {
     request,
     data,
     isLoading,
     lastUpdated,
-    error
+    error,
   };
 };
