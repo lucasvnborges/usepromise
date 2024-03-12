@@ -4,9 +4,6 @@ In order to fetch the data, you need to pass a Promise returning function as a f
 resolve option is used to initiate data fetching when component mounts.
 
 ```javascript
-import React from "react";
-import { usePromise } from "promise-hook";
-
 const Movies = () => {
   const { isLoading, data } = usePromise(fetchMovies, { resolve: true });
 
@@ -32,9 +29,6 @@ In order to pass some arguments to the Promise function, you need to use arrow f
 By default, when resolve option is enabled, data fetching is initiated only on the first render. But you can control it with resolveCondition setting. If an array of variables passed will be changed - data fetching will be initiated again.
 
 ```javascript
-import React from "react";
-import { usePromise } from "promise-hook";
-
 const Movies = ({ category }) => {
   const { isLoading, data } = usePromise(() => fetchMovies(category), {
     resolve: true,
