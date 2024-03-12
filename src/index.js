@@ -14,7 +14,7 @@ export const useAsync = (
   const [lastUpdated, setLastUpdated] = useState();
   const [isLoading, setLoading] = useState(defaultLoading);
 
-  const request = (...args) => {
+  const request = async (...args) => {
     if (typeof fn !== "function") {
       console.error("Invalid function provided to useAsync");
       return;
@@ -22,17 +22,15 @@ export const useAsync = (
 
     setLoading(true);
 
-    fn(...args)
-      .then((result) => {
-        setData(result);
-        setLastUpdated(Date.now());
-      })
-      .catch((err) => {
-        setError(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const result = await fn(...args);
+      setData(result);
+      setLastUpdated(Date.now());
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
