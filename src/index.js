@@ -4,15 +4,15 @@ export const useAsync = (
   fn,
   {
     resolve = false,
-    resolveCondition = [],
     defaultData = null,
+    resolveCondition = [],
     defaultLoading = resolve,
   } = {}
 ) => {
-  const [data, setData] = useState(defaultData);
-  const [isLoading, setLoading] = useState(defaultLoading);
-  const [lastUpdated, setLastUpdated] = useState();
   const [error, setError] = useState();
+  const [data, setData] = useState(defaultData);
+  const [lastUpdated, setLastUpdated] = useState();
+  const [isLoading, setLoading] = useState(defaultLoading);
 
   const request = (...args) => {
     if (typeof fn !== "function") {
